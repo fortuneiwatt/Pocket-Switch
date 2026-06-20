@@ -1,0 +1,1022 @@
+{
+  "_metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-05-31",
+    "source": "https://docs.pocket.network/developers/supported-chains",
+    "baseUrl": "https://{slug}.api.pocket.network",
+    "description": "Canonical chain mapping for Pocket Switch. Every entry maps a blockchain to its Pocket Network RPC endpoint and lists known URL patterns for competing providers (Infura, Alchemy, QuickNode). The parser reads this file to detect what provider/chain the developer is using and generate the correct Pocket replacement."
+  },
+
+  "evm": [
+    {
+      "id": "ethereum",
+      "name": "Ethereum",
+      "slug": "eth",
+      "pocketUrl": "https://eth.api.pocket.network",
+      "chainId": 1,
+      "nativeCurrency": "ETH",
+      "explorer": "https://etherscan.io",
+      "logoUrl": "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "mainnet.infura.io/v3/",
+            "https://mainnet.infura.io"
+          ],
+          "label": "Infura — Ethereum Mainnet"
+        },
+        "alchemy": {
+          "patterns": [
+            "eth-mainnet.g.alchemy.com/v2/",
+            "eth-mainnet.alchemyapi.io/v2/"
+          ],
+          "label": "Alchemy — Ethereum Mainnet"
+        },
+        "quicknode": {
+          "patterns": [
+            ".ethereum.quiknode.pro",
+            ".ethereum.discover.quiknode.pro"
+          ],
+          "label": "QuickNode — Ethereum Mainnet"
+        }
+      },
+      "wagmiChain": "mainnet",
+      "viemChain": "mainnet"
+    },
+
+    {
+      "id": "polygon",
+      "name": "Polygon",
+      "slug": "poly",
+      "pocketUrl": "https://poly.api.pocket.network",
+      "chainId": 137,
+      "nativeCurrency": "MATIC",
+      "explorer": "https://polygonscan.com",
+      "logoUrl": "https://cryptologos.cc/logos/polygon-matic-logo.svg",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "polygon-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Polygon Mainnet"
+        },
+        "alchemy": {
+          "patterns": [
+            "polygon-mainnet.g.alchemy.com/v2/",
+            "polygon-mainnet.alchemyapi.io/v2/"
+          ],
+          "label": "Alchemy — Polygon Mainnet"
+        },
+        "quicknode": {
+          "patterns": [
+            ".matic.quiknode.pro",
+            ".polygon.quiknode.pro"
+          ],
+          "label": "QuickNode — Polygon Mainnet"
+        }
+      },
+      "wagmiChain": "polygon",
+      "viemChain": "polygon"
+    },
+
+    {
+      "id": "arbitrum",
+      "name": "Arbitrum",
+      "slug": "arb-one",
+      "pocketUrl": "https://arb-one.api.pocket.network",
+      "chainId": 42161,
+      "nativeCurrency": "ETH",
+      "explorer": "https://arbiscan.io",
+      "logoUrl": "https://cryptologos.cc/logos/arbitrum-arb-logo.svg",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "arbitrum-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Arbitrum One"
+        },
+        "alchemy": {
+          "patterns": [
+            "arb-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Arbitrum One"
+        },
+        "quicknode": {
+          "patterns": [
+            ".arbitrum-mainnet.quiknode.pro",
+            ".arbitrum.quiknode.pro"
+          ],
+          "label": "QuickNode — Arbitrum One"
+        }
+      },
+      "wagmiChain": "arbitrum",
+      "viemChain": "arbitrum"
+    },
+
+    {
+      "id": "optimism",
+      "name": "Optimism",
+      "slug": "op",
+      "pocketUrl": "https://op.api.pocket.network",
+      "chainId": 10,
+      "nativeCurrency": "ETH",
+      "explorer": "https://optimistic.etherscan.io",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "optimism-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Optimism Mainnet"
+        },
+        "alchemy": {
+          "patterns": [
+            "opt-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Optimism Mainnet"
+        },
+        "quicknode": {
+          "patterns": [
+            ".optimism.quiknode.pro"
+          ],
+          "label": "QuickNode — Optimism Mainnet"
+        }
+      },
+      "wagmiChain": "optimism",
+      "viemChain": "optimism"
+    },
+
+    {
+      "id": "base",
+      "name": "Base",
+      "slug": "base",
+      "pocketUrl": "https://base.api.pocket.network",
+      "chainId": 8453,
+      "nativeCurrency": "ETH",
+      "explorer": "https://basescan.org",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "base-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Base Mainnet"
+        },
+        "quicknode": {
+          "patterns": [
+            ".base-mainnet.quiknode.pro",
+            ".base.quiknode.pro"
+          ],
+          "label": "QuickNode — Base Mainnet"
+        }
+      },
+      "wagmiChain": "base",
+      "viemChain": "base"
+    },
+
+    {
+      "id": "avalanche",
+      "name": "Avalanche (C-Chain)",
+      "slug": "avax",
+      "pocketUrl": "https://avax.api.pocket.network",
+      "chainId": 43114,
+      "nativeCurrency": "AVAX",
+      "explorer": "https://snowtrace.io",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "avalanche-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Avalanche C-Chain"
+        },
+        "alchemy": {
+          "patterns": [
+            "avax-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Avalanche C-Chain"
+        },
+        "quicknode": {
+          "patterns": [
+            ".avalanche-mainnet.quiknode.pro",
+            ".avax.quiknode.pro"
+          ],
+          "label": "QuickNode — Avalanche C-Chain"
+        }
+      },
+      "wagmiChain": "avalanche",
+      "viemChain": "avalanche"
+    },
+
+    {
+      "id": "bsc",
+      "name": "BNB Smart Chain",
+      "slug": "bsc",
+      "pocketUrl": "https://bsc.api.pocket.network",
+      "chainId": 56,
+      "nativeCurrency": "BNB",
+      "explorer": "https://bscscan.com",
+      "providers": {
+        "quicknode": {
+          "patterns": [
+            ".bsc.quiknode.pro"
+          ],
+          "label": "QuickNode — BNB Smart Chain"
+        },
+        "alchemy": {
+          "patterns": [
+            "bnb-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — BNB Smart Chain"
+        }
+      },
+      "wagmiChain": "bsc",
+      "viemChain": "bsc"
+    },
+
+    {
+      "id": "polygon-zkevm",
+      "name": "Polygon zkEVM",
+      "slug": "poly-zkevm",
+      "pocketUrl": "https://poly-zkevm.api.pocket.network",
+      "chainId": 1101,
+      "nativeCurrency": "ETH",
+      "explorer": "https://zkevm.polygonscan.com",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "polygonzkevm-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Polygon zkEVM"
+        }
+      },
+      "wagmiChain": "polygonZkEvm",
+      "viemChain": "polygonZkEvm"
+    },
+
+    {
+      "id": "zksync",
+      "name": "zkSync Era",
+      "slug": "zksync-era",
+      "pocketUrl": "https://zksync-era.api.pocket.network",
+      "chainId": 324,
+      "nativeCurrency": "ETH",
+      "explorer": "https://explorer.zksync.io",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "zksync-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — zkSync Era"
+        },
+        "quicknode": {
+          "patterns": [
+            ".zksync-mainnet.quiknode.pro"
+          ],
+          "label": "QuickNode — zkSync Era"
+        }
+      },
+      "wagmiChain": "zkSync",
+      "viemChain": "zkSync"
+    },
+
+    {
+      "id": "linea",
+      "name": "Linea",
+      "slug": "linea",
+      "pocketUrl": "https://linea.api.pocket.network",
+      "chainId": 59144,
+      "nativeCurrency": "ETH",
+      "explorer": "https://lineascan.build",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "linea-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Linea Mainnet"
+        }
+      },
+      "wagmiChain": "linea",
+      "viemChain": "linea"
+    },
+
+    {
+      "id": "scroll",
+      "name": "Scroll",
+      "slug": "scroll",
+      "pocketUrl": "https://scroll.api.pocket.network",
+      "chainId": 534352,
+      "nativeCurrency": "ETH",
+      "explorer": "https://scrollscan.com",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "scroll-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Scroll Mainnet"
+        }
+      },
+      "wagmiChain": "scroll",
+      "viemChain": "scroll"
+    },
+
+    {
+      "id": "blast",
+      "name": "Blast",
+      "slug": "blast",
+      "pocketUrl": "https://blast.api.pocket.network",
+      "chainId": 81457,
+      "nativeCurrency": "ETH",
+      "explorer": "https://blastscan.io",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "blast-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Blast Mainnet"
+        },
+        "quicknode": {
+          "patterns": [
+            ".blast-mainnet.quiknode.pro"
+          ],
+          "label": "QuickNode — Blast Mainnet"
+        }
+      },
+      "wagmiChain": "blast",
+      "viemChain": "blast"
+    },
+
+    {
+      "id": "mantle",
+      "name": "Mantle",
+      "slug": "mantle",
+      "pocketUrl": "https://mantle.api.pocket.network",
+      "chainId": 5000,
+      "nativeCurrency": "MNT",
+      "explorer": "https://explorer.mantle.xyz",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "mantle-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Mantle Mainnet"
+        }
+      },
+      "wagmiChain": "mantle",
+      "viemChain": "mantle"
+    },
+
+    {
+      "id": "gnosis",
+      "name": "Gnosis",
+      "slug": "gnosis",
+      "pocketUrl": "https://gnosis.api.pocket.network",
+      "chainId": 100,
+      "nativeCurrency": "xDAI",
+      "explorer": "https://gnosisscan.io",
+      "providers": {
+        "quicknode": {
+          "patterns": [
+            ".gnosis.quiknode.pro",
+            ".xdai.quiknode.pro"
+          ],
+          "label": "QuickNode — Gnosis Chain"
+        }
+      },
+      "wagmiChain": "gnosis",
+      "viemChain": "gnosis"
+    },
+
+    {
+      "id": "celo",
+      "name": "Celo",
+      "slug": "celo",
+      "pocketUrl": "https://celo.api.pocket.network",
+      "chainId": 42220,
+      "nativeCurrency": "CELO",
+      "explorer": "https://celoscan.io",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "celo-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Celo Mainnet"
+        }
+      },
+      "wagmiChain": "celo",
+      "viemChain": "celo"
+    },
+
+    {
+      "id": "fantom",
+      "name": "Fantom",
+      "slug": "fantom",
+      "pocketUrl": "https://fantom.api.pocket.network",
+      "chainId": 250,
+      "nativeCurrency": "FTM",
+      "explorer": "https://ftmscan.com",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "fantom-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Fantom Opera"
+        },
+        "quicknode": {
+          "patterns": [
+            ".fantom.quiknode.pro"
+          ],
+          "label": "QuickNode — Fantom Opera"
+        }
+      },
+      "wagmiChain": "fantom",
+      "viemChain": "fantom"
+    },
+
+    {
+      "id": "moonbeam",
+      "name": "Moonbeam",
+      "slug": "moonbeam",
+      "pocketUrl": "https://moonbeam.api.pocket.network",
+      "chainId": 1284,
+      "nativeCurrency": "GLMR",
+      "explorer": "https://moonscan.io",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "moonbeam-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Moonbeam"
+        }
+      },
+      "wagmiChain": "moonbeam",
+      "viemChain": "moonbeam"
+    },
+
+    {
+      "id": "moonriver",
+      "name": "Moonriver",
+      "slug": "moonriver",
+      "pocketUrl": "https://moonriver.api.pocket.network",
+      "chainId": 1285,
+      "nativeCurrency": "MOVR",
+      "explorer": "https://moonriver.moonscan.io",
+      "providers": {},
+      "wagmiChain": "moonriver",
+      "viemChain": "moonriver"
+    },
+
+    {
+      "id": "harmony",
+      "name": "Harmony",
+      "slug": "harmony",
+      "pocketUrl": "https://harmony.api.pocket.network",
+      "chainId": 1666600000,
+      "nativeCurrency": "ONE",
+      "explorer": "https://explorer.harmony.one",
+      "providers": {}
+    },
+
+    {
+      "id": "metis",
+      "name": "Metis",
+      "slug": "metis",
+      "pocketUrl": "https://metis.api.pocket.network",
+      "chainId": 1088,
+      "nativeCurrency": "METIS",
+      "explorer": "https://andromeda-explorer.metis.io",
+      "providers": {}
+    },
+
+    {
+      "id": "boba",
+      "name": "Boba Network",
+      "slug": "boba",
+      "pocketUrl": "https://boba.api.pocket.network",
+      "chainId": 288,
+      "nativeCurrency": "ETH",
+      "explorer": "https://bobascan.com",
+      "providers": {}
+    },
+
+    {
+      "id": "kava",
+      "name": "Kava",
+      "slug": "kava",
+      "pocketUrl": "https://kava.api.pocket.network",
+      "chainId": 2222,
+      "nativeCurrency": "KAVA",
+      "explorer": "https://explorer.kava.io",
+      "providers": {}
+    },
+
+    {
+      "id": "fuse",
+      "name": "Fuse",
+      "slug": "fuse",
+      "pocketUrl": "https://fuse.api.pocket.network",
+      "chainId": 122,
+      "nativeCurrency": "FUSE",
+      "explorer": "https://explorer.fuse.io",
+      "providers": {}
+    },
+
+    {
+      "id": "iotex",
+      "name": "IoTeX",
+      "slug": "iotex",
+      "pocketUrl": "https://iotex.api.pocket.network",
+      "chainId": 4689,
+      "nativeCurrency": "IOTX",
+      "explorer": "https://iotexscan.io",
+      "providers": {}
+    },
+
+    {
+      "id": "sei",
+      "name": "Sei",
+      "slug": "sei",
+      "pocketUrl": "https://sei.api.pocket.network",
+      "chainId": 1329,
+      "nativeCurrency": "SEI",
+      "explorer": "https://seitrace.com",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "sei-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Sei"
+        }
+      }
+    },
+
+    {
+      "id": "taiko",
+      "name": "Taiko",
+      "slug": "taiko",
+      "pocketUrl": "https://taiko.api.pocket.network",
+      "chainId": 167000,
+      "nativeCurrency": "ETH",
+      "explorer": "https://taikoscan.io",
+      "providers": {}
+    },
+
+    {
+      "id": "unichain",
+      "name": "Unichain",
+      "slug": "unichain",
+      "pocketUrl": "https://unichain.api.pocket.network",
+      "chainId": 130,
+      "nativeCurrency": "ETH",
+      "explorer": "https://uniscan.xyz",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "unichain-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Unichain"
+        }
+      }
+    },
+
+    {
+      "id": "berachain",
+      "name": "Berachain",
+      "slug": "bera",
+      "pocketUrl": "https://bera.api.pocket.network",
+      "chainId": 80094,
+      "nativeCurrency": "BERA",
+      "explorer": "https://berascan.com",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "berachain-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Berachain"
+        }
+      }
+    },
+
+    {
+      "id": "sonic",
+      "name": "Sonic",
+      "slug": "sonic",
+      "pocketUrl": "https://sonic.api.pocket.network",
+      "chainId": 146,
+      "nativeCurrency": "S",
+      "explorer": "https://sonicscan.org",
+      "providers": {}
+    },
+
+    {
+      "id": "fraxtal",
+      "name": "Fraxtal",
+      "slug": "fraxtal",
+      "pocketUrl": "https://fraxtal.api.pocket.network",
+      "chainId": 252,
+      "nativeCurrency": "frxETH",
+      "explorer": "https://fraxscan.com",
+      "providers": {}
+    },
+
+    {
+      "id": "ink",
+      "name": "Ink",
+      "slug": "ink",
+      "pocketUrl": "https://ink.api.pocket.network",
+      "chainId": 57073,
+      "nativeCurrency": "ETH",
+      "explorer": "https://explorer.inkonchain.com",
+      "providers": {}
+    },
+
+    {
+      "id": "kaia",
+      "name": "Kaia",
+      "slug": "kaia",
+      "pocketUrl": "https://kaia.api.pocket.network",
+      "chainId": 8217,
+      "nativeCurrency": "KAIA",
+      "explorer": "https://kaiascan.io",
+      "providers": {}
+    },
+
+    {
+      "id": "hyperliquid",
+      "name": "Hyperliquid",
+      "slug": "hyperliquid",
+      "pocketUrl": "https://hyperliquid.api.pocket.network",
+      "chainId": 998,
+      "nativeCurrency": "HYPE",
+      "explorer": "https://hyperliquid.xyz",
+      "providers": {}
+    },
+
+    {
+      "id": "opbnb",
+      "name": "opBNB",
+      "slug": "opbnb",
+      "pocketUrl": "https://opbnb.api.pocket.network",
+      "chainId": 204,
+      "nativeCurrency": "BNB",
+      "explorer": "https://opbnbscan.com",
+      "providers": {}
+    },
+
+    {
+      "id": "oasys",
+      "name": "Oasys",
+      "slug": "oasys",
+      "pocketUrl": "https://oasys.api.pocket.network",
+      "chainId": 248,
+      "nativeCurrency": "OAS",
+      "explorer": "https://scan.oasys.games",
+      "providers": {}
+    },
+
+    {
+      "id": "xrplevm",
+      "name": "XRPL EVM",
+      "slug": "xrplevm",
+      "pocketUrl": "https://xrplevm.api.pocket.network",
+      "chainId": 1440002,
+      "nativeCurrency": "XRP",
+      "explorer": "https://explorer.xrplevm.org",
+      "providers": {}
+    },
+
+    {
+      "id": "zklink",
+      "name": "zkLink Nova",
+      "slug": "zklink-nova",
+      "pocketUrl": "https://zklink-nova.api.pocket.network",
+      "chainId": 810180,
+      "nativeCurrency": "ETH",
+      "explorer": "https://explorer.zklink.io",
+      "providers": {}
+    }
+  ],
+
+  "cosmos": [
+    {
+      "id": "pocket",
+      "name": "Pocket Network",
+      "slug": "pocket",
+      "pocketUrl": "https://pocket.api.pocket.network",
+      "nativeCurrency": "POKT",
+      "explorer": "https://poktscan.com",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "osmosis",
+      "name": "Osmosis",
+      "slug": "osmosis",
+      "pocketUrl": "https://osmosis.api.pocket.network",
+      "nativeCurrency": "OSMO",
+      "explorer": "https://mintscan.io/osmosis",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "akash",
+      "name": "Akash",
+      "slug": "akash",
+      "pocketUrl": "https://akash.api.pocket.network",
+      "nativeCurrency": "AKT",
+      "explorer": "https://mintscan.io/akash",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "stargaze",
+      "name": "Stargaze",
+      "slug": "stargaze",
+      "pocketUrl": "https://stargaze.api.pocket.network",
+      "nativeCurrency": "STARS",
+      "explorer": "https://mintscan.io/stargaze",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "juno",
+      "name": "Juno",
+      "slug": "juno",
+      "pocketUrl": "https://juno.api.pocket.network",
+      "nativeCurrency": "JUNO",
+      "explorer": "https://mintscan.io/juno",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "fetch",
+      "name": "Fetch.ai",
+      "slug": "fetch",
+      "pocketUrl": "https://fetch.api.pocket.network",
+      "nativeCurrency": "FET",
+      "explorer": "https://mintscan.io/fetchai",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "atomone",
+      "name": "AtomOne",
+      "slug": "atomone",
+      "pocketUrl": "https://atomone.api.pocket.network",
+      "nativeCurrency": "ATONE",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "cheqd",
+      "name": "Cheqd",
+      "slug": "cheqd",
+      "pocketUrl": "https://cheqd.api.pocket.network",
+      "nativeCurrency": "CHEQ",
+      "explorer": "https://explorer.cheqd.io",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "chihuahua",
+      "name": "Chihuahua",
+      "slug": "chihuahua",
+      "pocketUrl": "https://chihuahua.api.pocket.network",
+      "nativeCurrency": "HUAHUA",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "jackal",
+      "name": "Jackal",
+      "slug": "jackal",
+      "pocketUrl": "https://jackal.api.pocket.network",
+      "nativeCurrency": "JKL",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "persistence",
+      "name": "Persistence",
+      "slug": "persistence",
+      "pocketUrl": "https://persistence.api.pocket.network",
+      "nativeCurrency": "XPRT",
+      "explorer": "https://mintscan.io/persistence",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "seda",
+      "name": "Seda",
+      "slug": "seda",
+      "pocketUrl": "https://seda.api.pocket.network",
+      "nativeCurrency": "SEDA",
+      "rpcType": "cosmos",
+      "providers": {}
+    },
+    {
+      "id": "shentu",
+      "name": "Shentu",
+      "slug": "shentu",
+      "pocketUrl": "https://shentu.api.pocket.network",
+      "nativeCurrency": "CTK",
+      "rpcType": "cosmos",
+      "providers": {}
+    }
+  ],
+
+  "other": [
+    {
+      "id": "solana",
+      "name": "Solana",
+      "slug": "solana",
+      "pocketUrl": "https://solana.api.pocket.network",
+      "nativeCurrency": "SOL",
+      "explorer": "https://solscan.io",
+      "rpcType": "solana",
+      "logoUrl": "https://cryptologos.cc/logos/solana-sol-logo.svg",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "solana-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Solana Mainnet"
+        },
+        "quicknode": {
+          "patterns": [
+            ".solana-mainnet.quiknode.pro"
+          ],
+          "label": "QuickNode — Solana Mainnet"
+        }
+      }
+    },
+    {
+      "id": "near",
+      "name": "NEAR Protocol",
+      "slug": "near",
+      "pocketUrl": "https://near.api.pocket.network",
+      "nativeCurrency": "NEAR",
+      "explorer": "https://nearblocks.io",
+      "rpcType": "near",
+      "providers": {
+        "infura": {
+          "patterns": [
+            "near-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — NEAR Mainnet"
+        }
+      }
+    },
+    {
+      "id": "sui",
+      "name": "Sui",
+      "slug": "sui",
+      "pocketUrl": "https://sui.api.pocket.network",
+      "nativeCurrency": "SUI",
+      "explorer": "https://suiscan.xyz",
+      "rpcType": "sui",
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "sui-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Sui Mainnet"
+        }
+      }
+    },
+    {
+      "id": "tron",
+      "name": "Tron",
+      "slug": "tron",
+      "pocketUrl": "https://tron.api.pocket.network",
+      "nativeCurrency": "TRX",
+      "explorer": "https://tronscan.org",
+      "rpcType": "tron",
+      "providers": {
+        "quicknode": {
+          "patterns": [
+            ".tron.quiknode.pro"
+          ],
+          "label": "QuickNode — Tron Mainnet"
+        }
+      }
+    },
+    {
+      "id": "radix",
+      "name": "Radix",
+      "slug": "radix",
+      "pocketUrl": "https://radix.api.pocket.network",
+      "nativeCurrency": "XRD",
+      "explorer": "https://dashboard.radixdlt.com",
+      "rpcType": "radix",
+      "providers": {}
+    }
+  ],
+
+  "testnets": [
+    {
+      "id": "eth-sepolia",
+      "name": "Ethereum Sepolia",
+      "slug": "eth-sepolia-testnet",
+      "pocketUrl": "https://eth-sepolia-testnet.api.pocket.network",
+      "chainId": 11155111,
+      "nativeCurrency": "ETH",
+      "isTestnet": true,
+      "providers": {
+        "infura": {
+          "patterns": [
+            "sepolia.infura.io/v3/"
+          ],
+          "label": "Infura — Ethereum Sepolia"
+        },
+        "alchemy": {
+          "patterns": [
+            "eth-sepolia.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Ethereum Sepolia"
+        }
+      }
+    },
+    {
+      "id": "base-sepolia",
+      "name": "Base Sepolia",
+      "slug": "base-sepolia-testnet",
+      "pocketUrl": "https://base-sepolia-testnet.api.pocket.network",
+      "chainId": 84532,
+      "nativeCurrency": "ETH",
+      "isTestnet": true,
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "base-sepolia.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Base Sepolia"
+        }
+      }
+    },
+    {
+      "id": "arb-sepolia",
+      "name": "Arbitrum Sepolia",
+      "slug": "arb-sepolia-testnet",
+      "pocketUrl": "https://arb-sepolia-testnet.api.pocket.network",
+      "chainId": 421614,
+      "nativeCurrency": "ETH",
+      "isTestnet": true,
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "arb-sepolia.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Arbitrum Sepolia"
+        }
+      }
+    },
+    {
+      "id": "op-sepolia",
+      "name": "Optimism Sepolia",
+      "slug": "op-sepolia-testnet",
+      "pocketUrl": "https://op-sepolia-testnet.api.pocket.network",
+      "chainId": 11155420,
+      "nativeCurrency": "ETH",
+      "isTestnet": true,
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "opt-sepolia.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Optimism Sepolia"
+        }
+      }
+    },
+    {
+      "id": "poly-amoy",
+      "name": "Polygon Amoy",
+      "slug": "poly-amoy-testnet",
+      "pocketUrl": "https://poly-amoy-testnet.api.pocket.network",
+      "chainId": 80002,
+      "nativeCurrency": "MATIC",
+      "isTestnet": true,
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "polygon-amoy.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Polygon Amoy"
+        }
+      }
+    },
+    {
+      "id": "xrplevm-testnet",
+      "name": "XRPL EVM Testnet",
+      "slug": "xrplevm-testnet",
+      "pocketUrl": "https://xrplevm-testnet.api.pocket.network",
+      "isTestnet": true,
+      "providers": {}
+    },
+    {
+      "id": "giwa-sepolia",
+      "name": "GIWA Sepolia",
+      "slug": "giwa-sepolia-testnet",
+      "pocketUrl": "https://giwa-sepolia-testnet.api.pocket.network",
+      "isTestnet": true,
+      "providers": {}
+    }
+  ]
+}

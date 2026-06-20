@@ -1,0 +1,70 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+:root {
+  --background: #0a0f1e;
+  --foreground: #e2e8f0;
+
+  --surface: #0f172a;
+  --surface-raised: #0b1120;
+  --border: #1e293b;
+  --border-hover: #334155;
+
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-soft: #1e3a5f;
+  --accent-text: #60a5fa;
+
+  --success: #10b981;
+  --success-bg: #022c22;
+  --success-border: #064e3b;
+  --success-text: #34d399;
+
+  --danger: #ef4444;
+
+  --muted: #475569;
+  --muted-light: #64748b;
+  --muted-lighter: #94a3b8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+  --color-success-text: var(--success-text);
+  --color-danger: var(--danger);
+  --color-muted: var(--muted);
+  --color-muted-light: var(--muted-light);
+  --color-muted-lighter: var(--muted-lighter);
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono-code: "JetBrains Mono", monospace;
+  --font-sans: "Inter", sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.shiki {
+  background: transparent !important;
+  font-family: var(--font-mono-code);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
