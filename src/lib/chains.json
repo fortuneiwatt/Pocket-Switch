@@ -6,7 +6,6 @@
     "baseUrl": "https://{slug}.api.pocket.network",
     "description": "Canonical chain mapping for Pocket Switch. Every entry maps a blockchain to its Pocket Network RPC endpoint and lists known URL patterns for competing providers (Infura, Alchemy, QuickNode). The parser reads this file to detect what provider/chain the developer is using and generate the correct Pocket replacement."
   },
-
   "evm": [
     {
       "id": "ethereum",
@@ -20,8 +19,8 @@
       "providers": {
         "infura": {
           "patterns": [
-            "mainnet.infura.io/v3/",
-            "https://mainnet.infura.io"
+            "https://mainnet.infura.io/v3/",
+            "wss://mainnet.infura.io/ws/v3/"
           ],
           "label": "Infura — Ethereum Mainnet"
         },
@@ -43,7 +42,6 @@
       "wagmiChain": "mainnet",
       "viemChain": "mainnet"
     },
-
     {
       "id": "polygon",
       "name": "Polygon",
@@ -78,7 +76,6 @@
       "wagmiChain": "polygon",
       "viemChain": "polygon"
     },
-
     {
       "id": "arbitrum",
       "name": "Arbitrum",
@@ -112,7 +109,6 @@
       "wagmiChain": "arbitrum",
       "viemChain": "arbitrum"
     },
-
     {
       "id": "optimism",
       "name": "Optimism",
@@ -144,7 +140,6 @@
       "wagmiChain": "optimism",
       "viemChain": "optimism"
     },
-
     {
       "id": "base",
       "name": "Base",
@@ -166,12 +161,17 @@
             ".base.quiknode.pro"
           ],
           "label": "QuickNode — Base Mainnet"
+        },
+        "infura": {
+          "patterns": [
+            "base-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Base Mainnet"
         }
       },
       "wagmiChain": "base",
       "viemChain": "base"
     },
-
     {
       "id": "avalanche",
       "name": "Avalanche (C-Chain)",
@@ -204,7 +204,6 @@
       "wagmiChain": "avalanche",
       "viemChain": "avalanche"
     },
-
     {
       "id": "bsc",
       "name": "BNB Smart Chain",
@@ -225,12 +224,17 @@
             "bnb-mainnet.g.alchemy.com/v2/"
           ],
           "label": "Alchemy — BNB Smart Chain"
+        },
+        "infura": {
+          "patterns": [
+            "bsc-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — BNB Smart Chain"
         }
       },
       "wagmiChain": "bsc",
       "viemChain": "bsc"
     },
-
     {
       "id": "polygon-zkevm",
       "name": "Polygon zkEVM",
@@ -250,7 +254,6 @@
       "wagmiChain": "polygonZkEvm",
       "viemChain": "polygonZkEvm"
     },
-
     {
       "id": "zksync",
       "name": "zkSync Era",
@@ -271,12 +274,17 @@
             ".zksync-mainnet.quiknode.pro"
           ],
           "label": "QuickNode — zkSync Era"
+        },
+        "infura": {
+          "patterns": [
+            "zksync-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — zkSync Era Mainnet"
         }
       },
       "wagmiChain": "zkSync",
       "viemChain": "zkSync"
     },
-
     {
       "id": "linea",
       "name": "Linea",
@@ -296,7 +304,6 @@
       "wagmiChain": "linea",
       "viemChain": "linea"
     },
-
     {
       "id": "scroll",
       "name": "Scroll",
@@ -311,12 +318,17 @@
             "scroll-mainnet.g.alchemy.com/v2/"
           ],
           "label": "Alchemy — Scroll Mainnet"
+        },
+        "infura": {
+          "patterns": [
+            "scroll-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Scroll Mainnet"
         }
       },
       "wagmiChain": "scroll",
       "viemChain": "scroll"
     },
-
     {
       "id": "blast",
       "name": "Blast",
@@ -337,12 +349,17 @@
             ".blast-mainnet.quiknode.pro"
           ],
           "label": "QuickNode — Blast Mainnet"
+        },
+        "infura": {
+          "patterns": [
+            "blast-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Blast Mainnet"
         }
       },
       "wagmiChain": "blast",
       "viemChain": "blast"
     },
-
     {
       "id": "mantle",
       "name": "Mantle",
@@ -357,12 +374,17 @@
             "mantle-mainnet.g.alchemy.com/v2/"
           ],
           "label": "Alchemy — Mantle Mainnet"
+        },
+        "infura": {
+          "patterns": [
+            "mantle-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Mantle Mainnet"
         }
       },
       "wagmiChain": "mantle",
       "viemChain": "mantle"
     },
-
     {
       "id": "gnosis",
       "name": "Gnosis",
@@ -383,7 +405,6 @@
       "wagmiChain": "gnosis",
       "viemChain": "gnosis"
     },
-
     {
       "id": "celo",
       "name": "Celo",
@@ -403,7 +424,6 @@
       "wagmiChain": "celo",
       "viemChain": "celo"
     },
-
     {
       "id": "fantom",
       "name": "Fantom",
@@ -429,7 +449,6 @@
       "wagmiChain": "fantom",
       "viemChain": "fantom"
     },
-
     {
       "id": "moonbeam",
       "name": "Moonbeam",
@@ -449,7 +468,6 @@
       "wagmiChain": "moonbeam",
       "viemChain": "moonbeam"
     },
-
     {
       "id": "moonriver",
       "name": "Moonriver",
@@ -462,7 +480,6 @@
       "wagmiChain": "moonriver",
       "viemChain": "moonriver"
     },
-
     {
       "id": "harmony",
       "name": "Harmony",
@@ -473,7 +490,6 @@
       "explorer": "https://explorer.harmony.one",
       "providers": {}
     },
-
     {
       "id": "metis",
       "name": "Metis",
@@ -484,7 +500,6 @@
       "explorer": "https://andromeda-explorer.metis.io",
       "providers": {}
     },
-
     {
       "id": "boba",
       "name": "Boba Network",
@@ -495,7 +510,6 @@
       "explorer": "https://bobascan.com",
       "providers": {}
     },
-
     {
       "id": "kava",
       "name": "Kava",
@@ -506,7 +520,6 @@
       "explorer": "https://explorer.kava.io",
       "providers": {}
     },
-
     {
       "id": "fuse",
       "name": "Fuse",
@@ -517,7 +530,6 @@
       "explorer": "https://explorer.fuse.io",
       "providers": {}
     },
-
     {
       "id": "iotex",
       "name": "IoTeX",
@@ -528,7 +540,6 @@
       "explorer": "https://iotexscan.io",
       "providers": {}
     },
-
     {
       "id": "sei",
       "name": "Sei",
@@ -543,10 +554,15 @@
             "sei-mainnet.g.alchemy.com/v2/"
           ],
           "label": "Alchemy — Sei"
+        },
+        "infura": {
+          "patterns": [
+            "sei-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Sei Mainnet"
         }
       }
     },
-
     {
       "id": "taiko",
       "name": "Taiko",
@@ -557,7 +573,6 @@
       "explorer": "https://taikoscan.io",
       "providers": {}
     },
-
     {
       "id": "unichain",
       "name": "Unichain",
@@ -572,10 +587,15 @@
             "unichain-mainnet.g.alchemy.com/v2/"
           ],
           "label": "Alchemy — Unichain"
+        },
+        "infura": {
+          "patterns": [
+            "unichain-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Unichain Mainnet"
         }
       }
     },
-
     {
       "id": "berachain",
       "name": "Berachain",
@@ -593,7 +613,6 @@
         }
       }
     },
-
     {
       "id": "sonic",
       "name": "Sonic",
@@ -604,7 +623,6 @@
       "explorer": "https://sonicscan.org",
       "providers": {}
     },
-
     {
       "id": "fraxtal",
       "name": "Fraxtal",
@@ -615,7 +633,6 @@
       "explorer": "https://fraxscan.com",
       "providers": {}
     },
-
     {
       "id": "ink",
       "name": "Ink",
@@ -626,7 +643,6 @@
       "explorer": "https://explorer.inkonchain.com",
       "providers": {}
     },
-
     {
       "id": "kaia",
       "name": "Kaia",
@@ -637,7 +653,6 @@
       "explorer": "https://kaiascan.io",
       "providers": {}
     },
-
     {
       "id": "hyperliquid",
       "name": "Hyperliquid",
@@ -648,7 +663,6 @@
       "explorer": "https://hyperliquid.xyz",
       "providers": {}
     },
-
     {
       "id": "opbnb",
       "name": "opBNB",
@@ -657,9 +671,15 @@
       "chainId": 204,
       "nativeCurrency": "BNB",
       "explorer": "https://opbnbscan.com",
-      "providers": {}
+      "providers": {
+        "infura": {
+          "patterns": [
+            "opbnb-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — opBNB Mainnet"
+        }
+      }
     },
-
     {
       "id": "oasys",
       "name": "Oasys",
@@ -670,7 +690,6 @@
       "explorer": "https://scan.oasys.games",
       "providers": {}
     },
-
     {
       "id": "xrplevm",
       "name": "XRPL EVM",
@@ -681,7 +700,6 @@
       "explorer": "https://explorer.xrplevm.org",
       "providers": {}
     },
-
     {
       "id": "zklink",
       "name": "zkLink Nova",
@@ -693,7 +711,6 @@
       "providers": {}
     }
   ],
-
   "cosmos": [
     {
       "id": "pocket",
@@ -821,7 +838,6 @@
       "providers": {}
     }
   ],
-
   "other": [
     {
       "id": "solana",
@@ -844,6 +860,12 @@
             ".solana-mainnet.quiknode.pro"
           ],
           "label": "QuickNode — Solana Mainnet"
+        },
+        "infura": {
+          "patterns": [
+            "solana-mainnet.infura.io/v3/"
+          ],
+          "label": "Infura — Solana Mainnet"
         }
       }
     },
@@ -909,7 +931,6 @@
       "providers": {}
     }
   ],
-
   "testnets": [
     {
       "id": "eth-sepolia",

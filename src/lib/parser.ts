@@ -31,9 +31,17 @@ const DEFAULT_CHAIN: ChainEntry =
  *  2. Which chain it points at (Ethereum / Polygon / etc.)
  *
  * Strategy: walk every chain's provider pattern list and test substring
- * matches against the lowercased input. First match wins. This is intentionally
- * simple — RPC URLs have very distinct, non-overlapping hostnames, so substring
- * matching is reliable and fast with zero dependencies.
+ * matches against the lowercased input, collecting ALL matches rather than
+ * returning the first one found. We then pick the LONGEST matching pattern.
+ *
+ * Why longest-match-wins matters: many providers use predictable subdomain
+ * conventions like "{chain}-mainnet.infura.io/v3/". A loose pattern for one
+ * chain (e.g. just "mainnet.infura.io/v3/" for Ethereum) is a substring of
+ * every other chain's URL too (e.g. "arbitrum-mainnet.infura.io/v3/"). If we
+ * matched on first-found-in-array-order, Ethereum could falsely "win" against
+ * every other Infura chain depending on array position. Longest-match-wins
+ * fixes this generally, without requiring every pattern to be hand-checked
+ * for accidental overlap as new chains are added.
  */
 export function detectChain(input: string): DetectionResult | null {
   const trimmed = input.trim();
@@ -41,13 +49,21 @@ export function detectChain(input: string): DetectionResult | null {
 
   const haystack = trimmed.toLowerCase();
 
+  let best: DetectionResult | null = null;
+  let bestLength = 0;
+
   for (const chain of ALL_CHAINS) {
     for (const [providerName, providerData] of Object.entries(
       chain.providers
     )) {
       for (const pattern of providerData.patterns) {
-        if (haystack.includes(pattern.toLowerCase())) {
-          return {
+        const lowerPattern = pattern.toLowerCase();
+        if (
+          haystack.includes(lowerPattern) &&
+          lowerPattern.length > bestLength
+        ) {
+          bestLength = lowerPattern.length;
+          best = {
             chain,
             providerName,
             providerLabel: providerData.label,
@@ -57,6 +73,8 @@ export function detectChain(input: string): DetectionResult | null {
       }
     }
   }
+
+  if (best) return best;
 
   // No chain-specific match. Check if we can at least identify the provider
   // generically (e.g. "infura.io" appears but didn't match a specific chain
