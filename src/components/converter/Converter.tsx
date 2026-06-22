@@ -141,6 +141,22 @@ export function Converter() {
       {/* Output */}
       {snippets && detection && (
         <div className="mt-4 bg-surface border border-border rounded-2xl overflow-hidden">
+          {/* Prominent Pocket endpoint callout — makes the actual Pocket Network
+              usage impossible to miss, independent of syntax highlighting */}
+          <div className="flex items-center gap-3 px-5 py-3.5 border-b border-success-border bg-success-bg">
+            <div className="w-7 h-7 rounded-md bg-success/15 flex items-center justify-center text-sm flex-shrink-0">
+              ⬡
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] text-success-text/70 uppercase tracking-wide font-display mb-0.5">
+                Pocket Network Endpoint
+              </div>
+              <div className="font-mono-code text-[13px] text-success-text font-medium truncate">
+                {detection.chain.pocketUrl}
+              </div>
+            </div>
+          </div>
+
           <div className="flex border-b border-border bg-surface-raised overflow-x-auto">
             {ALL_FRAMEWORKS.map((fw) => (
               <button
