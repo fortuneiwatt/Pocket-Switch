@@ -2,7 +2,12 @@
 
 **Switch from Infura or Alchemy to Pocket Network in 60 seconds.**
 
-Built for the [Built On Pocket Hackathon](https://thoughtful-factory-dae.notion.site/36c519c92e6380b5bc4af514cb164695) — June 2026.
+Built for the [Built On Pocket Hackathon](https://thoughtful-factory-dae.notion.site/36c519c92e6380b5bc4af514cb164695) — Week 2 Submission, June 2026.
+
+🔗 **Live:** [pocket-switch.onrender.com](https://pocket-switch.onrender.com/)
+
+> 📄 Full project documentation (Pocket usage, weekly progress, AI disclosure): [`PROJECT.md`](./PROJECT.md)
+> 📊 Detection coverage breakdown: [`COVERAGE.md`](./COVERAGE.md)
 
 ---
 
@@ -27,17 +32,9 @@ No documentation reading. No account creation. No guessing the URL pattern. Just
 
 ---
 
-## How It Works
+## How Pocket Network Is Used — Not Just Mentioned
 
-```
-1. Paste your Infura/Alchemy URL or code snippet
-2. The parser detects the provider + blockchain
-3. Generator outputs ready-to-use Pocket code
-   across 5 frameworks: ethers.js, viem, wagmi, web3.py, curl
-4. Copy. Paste into your project. Done.
-```
-
-All detection and code generation runs **entirely client-side** — no servers, no API calls, no logging of anyone's API keys. Input never leaves the browser.
+This project's entire output is a real Pocket Network endpoint. Every chain in `src/lib/chains.json` maps to its actual public RPC URL, following Pocket's documented pattern `https://{chain-slug}.api.pocket.network`. When the converter runs, the code it generates calls that real endpoint directly — see the **Pocket Network Endpoint** callout shown above every generated code block in the app, and the full breakdown in [`PROJECT.md`](./PROJECT.md#how-this-project-uses-pocket-network).
 
 ### Example
 
@@ -51,17 +48,32 @@ const provider = new JsonRpcProvider("https://mainnet.infura.io/v3/YOUR_KEY")
 const provider = new JsonRpcProvider("https://eth.api.pocket.network")
 ```
 
-Same JSON-RPC 2.0 protocol underneath — only the URL changes. Nothing else in your codebase needs to be touched.
+Same JSON-RPC 2.0 protocol underneath — only the URL changes. Nothing else in the codebase needs to be touched.
 
 ---
 
-## Features
+## What's Actually Working Right Now (Week 2 MVP)
 
-- **Smart Converter** — detects Infura, Alchemy, and QuickNode patterns from a pasted URL or full code snippet, across 60+ chains
-- **5 Framework Outputs** — ethers.js, viem, wagmi, web3.py, and curl, generated correctly for the detected chain
-- **Chain Explorer** — searchable directory of every chain Pocket supports, each with a one-click-copy endpoint
-- **Why Switch?** — honest, sourced comparison of Infura vs Alchemy vs Pocket Network
-- **Zero backend** — runs fully in the browser; no data is ever transmitted or stored
+- **Converter** — paste a URL or code snippet, get back detected provider + chain, plus ready-to-copy code in 5 frameworks (ethers.js, viem, wagmi, web3.py, curl)
+- **Chain Explorer** — searchable directory of every Pocket-supported chain with one-click-copy endpoints
+- **Why Switch?** — sourced, honest comparison of Infura vs Alchemy vs Pocket Network
+- **Detection coverage** — 25 of 55 mainnet chains (45%) have verified, tested provider-pattern detection, sourced directly from official Infura/MetaMask documentation. See [`COVERAGE.md`](./COVERAGE.md) for the exact breakdown and methodology.
+- **Automated tests** — 11 passing tests (Vitest), including a general collision-detection test that guards against the entire class of bug found during this week's coverage expansion (see Challenges section below)
+- **Zero backend** — all detection and code generation runs client-side in the browser; no API keys or pasted input are ever transmitted or logged
+
+### What's Not Done Yet (Being Honest)
+
+- 30 of 55 mainnet chains still lack verified provider patterns (mostly newer/non-EVM chains not consistently documented by Infura/Alchemy — see `COVERAGE.md`)
+- No real external developer testing yet — only internal testing so far
+- Mobile responsiveness not yet formally verified
+
+---
+
+## Challenges & Blockers Encountered This Week
+
+**A real detection bug, found through testing, not assumption.** While expanding chain coverage, Ethereum's original provider pattern (`mainnet.infura.io/v3/`) turned out to be a substring of every *other* Infura chain's URL too (e.g. `arbitrum-mainnet.infura.io/v3/` contains that exact substring). Combined with first-match-wins logic, every newly added chain was silently being misdetected as Ethereum. Fixed by tightening the Ethereum pattern and rewriting the parser to use longest-match-wins instead of first-match-wins — and added an automated test that checks the entire dataset for this class of collision automatically, so it can't silently return as more chains are added.
+
+**Provider pattern verification took longer than expected.** Rather than guess at Alchemy/Infura URL patterns for less common chains, every pattern in `chains.json` is sourced from official documentation. Where a pattern couldn't be verified (e.g. some newer Alchemy-supported chains), it was deliberately left undetected rather than risk a wrong or misleading match — documented transparently in `COVERAGE.md`.
 
 ---
 
@@ -73,10 +85,11 @@ Same JSON-RPC 2.0 protocol underneath — only the URL changes. Nothing else in 
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | Syntax highlighting | Shiki |
-| Deployment | Vercel |
+| Testing | Vitest |
+| Deployment | Render |
 | AI-assisted development | Claude (Anthropic), Cursor AI |
 
-**AI Usage Disclosure:** This project was built with AI assistance for code generation, architecture planning, and debugging, in line with the hackathon's stated rules permitting and encouraging AI-assisted development. All chain data was independently sourced and verified against [docs.pocket.network](https://docs.pocket.network).
+**AI Usage Disclosure:** This project was built with AI assistance for code generation, architecture planning, and debugging, in line with the hackathon's stated rules permitting and encouraging AI-assisted development. All chain data was independently sourced and verified against official documentation — see `COVERAGE.md`.
 
 ---
 
@@ -84,13 +97,17 @@ Same JSON-RPC 2.0 protocol underneath — only the URL changes. Nothing else in 
 
 ```
 pocket-switch/
+├── PROJECT.md                 # Full project documentation (Pocket usage, weekly progress)
+├── COVERAGE.md                # Detection coverage breakdown, methodology, known bug fix
 ├── src/
 │   ├── lib/
-│   │   ├── chains.json      # Source of truth: 60+ chains, Pocket URLs, provider patterns
-│   │   ├── types.ts         # Shared TypeScript types
-│   │   ├── parser.ts        # Detection engine (provider + chain identification)
-│   │   ├── generator.ts     # Per-framework code snippet generator
-│   │   └── highlight.ts     # Shiki syntax highlighting wrapper
+│   │   ├── chains.json        # Source of truth: 60+ chains, Pocket URLs, provider patterns
+│   │   ├── types.ts           # Shared TypeScript types
+│   │   ├── parser.ts          # Detection engine (provider + chain identification)
+│   │   ├── generator.ts       # Per-framework code snippet generator
+│   │   ├── highlight.ts       # Shiki syntax highlighting wrapper
+│   │   └── __tests__/
+│   │       └── parser.test.ts # Automated test suite (11 tests)
 │   ├── components/
 │   │   ├── Navbar.tsx
 │   │   ├── Footer.tsx
@@ -98,9 +115,9 @@ pocket-switch/
 │   │   └── converter/
 │   │       └── Converter.tsx  # Core MVP feature
 │   └── app/
-│       ├── page.tsx          # Homepage — the converter
-│       ├── chains/page.tsx   # Chain Explorer
-│       └── why/page.tsx      # Why Switch comparison
+│       ├── page.tsx           # Homepage — the converter
+│       ├── chains/page.tsx    # Chain Explorer
+│       └── why/page.tsx       # Why Switch comparison
 ```
 
 ---
@@ -108,7 +125,7 @@ pocket-switch/
 ## Running Locally
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/pocket-switch.git
+git clone https://github.com/fortuneiwatt/pocket-switch.git
 cd pocket-switch
 npm install
 npm run dev
@@ -116,9 +133,9 @@ npm run dev
 
 Visit `http://localhost:3000`.
 
-### Try it yourself
+### Try the converter yourself
 
-Paste any of these into the converter:
+Paste any of these into the input box:
 
 ```
 https://mainnet.infura.io/v3/YOUR_KEY
@@ -132,6 +149,22 @@ https://polygon-mainnet.g.alchemy.com/v2/KEY
 
 ---
 
+## Links
+
+**Live demo:** [pocket-switch.onrender.com](https://pocket-switch.onrender.com/)
+
+
+
+**Project documentation:** [`PROJECT.md`](./PROJECT.md) · 
+
+---
+
+## Pre-Existing Work Disclosure
+
+**100% of this project was started and built during the Built On Pocket Hackathon timeline (June 8 onward).** No pre-existing code, repository, or prior version of this tool existed before the event. See [`PROJECT.md`](./PROJECT.md#pre-existing-work-disclosure) for the full disclosure statement.
+
+---
+
 ## Why This Matters Long-Term
 
 Pocket's own team has acknowledged that developer onboarding friction is one of the biggest barriers to network growth. Every developer who switches to Pocket through this tool drives more relays through the network — which drives more POKT burned — which directly supports the protocol's core economic mechanism.
@@ -139,6 +172,12 @@ Pocket's own team has acknowledged that developer onboarding friction is one of 
 This isn't a tool that becomes obsolete after the hackathon. As Pocket adds new chains, `chains.json` gets one new entry and every part of the app — converter, explorer, generator — supports it automatically.
 
 ---
+
+## Screenshots
+<img src="./Screenshot 2026-06-22 143248.png" width="600" alt="#">
+<img src="./Screenshot 2026-06-22 143308.png" width="600" alt="#">
+<img src="./Screenshot 2026-06-22 143326.png" width="600" alt="#">
+<img src="./Screenshot 2026-06-22 143342.png" width="600" alt="#">
 
 ## License
 
