@@ -332,18 +332,6 @@ Suggested additions:
 * Chain Explorer
 * Why Switch page
 
----
-
-# AI Usage Disclosure
-
-This project was built with AI assistance for:
-
-* Architecture planning
-* Code generation
-* Debugging
-* Documentation
-
-All chain mappings, Pocket endpoints, and provider patterns were independently verified against official documentation rather than relying solely on AI-generated outputs.
 
 ---
 
