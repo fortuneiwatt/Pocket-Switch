@@ -141,33 +141,20 @@ export function detectChain(input: string): DetectionResult | null {
 }
 
 /**
- * Like detectChain, but returns every distinct chain found in the input
- * instead of stopping at the single best match. Built for real-world pastes
- * that contain multiple RPC URLs at once — e.g. a wagmi config listing 5
- * chains, or a .env file with one line per network.
- *
- * Deduplication strategy: matches are grouped by their starting position in
- * the input. Overlapping matches at/near the same position (e.g. a loose
- * "mainnet.infura.io" match inside a more specific
- * "arbitrum-mainnet.infura.io" match) keep only the longest pattern at that
- * position — same principle as detectChain's longest-match-wins, just
- * applied per-position instead of globally. After that, results are
- * deduplicated by chain id, since the same chain appearing twice (e.g. an
- * HTTP and a WSS URL for the same network) should surface once, not twice.
+ * Resolves raw matches down to one match per overlapping span, using the
+ * same longest-match-wins principle as detectChain — but does NOT dedupe by
+ * chain id. Multiple occurrences of the same chain's URL (e.g. Ethereum
+ * appearing 3 times in a file) are all kept, since callers that need to do
+ * a literal find-and-replace across a whole file need every occurrence, not
+ * just one representative per chain.
  */
-export function detectAllChains(input: string): DetectionResult[] {
-  const trimmed = input.trim();
-  if (!trimmed) return [];
-
-  const haystack = trimmed.toLowerCase();
-  const rawMatches = findAllMatches(haystack);
+function resolveOverlaps(rawMatches: RawMatch[]): RawMatch[] {
   if (rawMatches.length === 0) return [];
 
-  // Sort by start position so overlap-resolution can scan left to right.
-  rawMatches.sort((a, b) => a.index - b.index);
-
+  const sorted = [...rawMatches].sort((a, b) => a.index - b.index);
   const resolved: RawMatch[] = [];
-  for (const match of rawMatches) {
+
+  for (const match of sorted) {
     const matchEnd = match.index + match.matchedPattern.length;
     const overlapping = resolved.find((existing) => {
       const existingEnd = existing.index + existing.matchedPattern.length;
@@ -177,13 +164,35 @@ export function detectAllChains(input: string): DetectionResult[] {
     if (!overlapping) {
       resolved.push(match);
     } else if (match.matchedPattern.length > overlapping.matchedPattern.length) {
-      // A longer, more specific pattern overlaps an existing weaker one —
-      // replace it, same longest-match-wins principle as detectChain.
       const idx = resolved.indexOf(overlapping);
       resolved[idx] = match;
     }
     // else: existing match is already longer/equal — keep it, discard this one.
   }
+
+  return resolved;
+}
+
+/**
+ * Like detectChain, but returns every distinct chain found in the input
+ * instead of stopping at the single best match. Built for real-world pastes
+ * that contain multiple RPC URLs at once — e.g. a wagmi config listing 5
+ * chains, or a .env file with one line per network.
+ *
+ * Deduplication strategy: overlapping matches are resolved first (see
+ * resolveOverlaps), then results are deduplicated by chain id, since the
+ * same chain appearing twice (e.g. an HTTP and a WSS URL for the same
+ * network) should surface once in the UI, not twice.
+ */
+export function detectAllChains(input: string): DetectionResult[] {
+  const trimmed = input.trim();
+  if (!trimmed) return [];
+
+  const haystack = trimmed.toLowerCase();
+  const rawMatches = findAllMatches(haystack);
+  if (rawMatches.length === 0) return [];
+
+  const resolved = resolveOverlaps(rawMatches);
 
   // Deduplicate by chain id, preserving first-seen order (left-to-right in
   // the original input), and convert to the public DetectionResult shape.
@@ -201,6 +210,153 @@ export function detectAllChains(input: string): DetectionResult[] {
   }
 
   return results;
+}
+
+export interface FileConversionResult {
+  /** The original file content with every detected RPC URL replaced */
+  convertedContent: string;
+  /** Every distinct chain that was found and replaced, in first-seen order */
+  chainsFound: DetectionResult[];
+  /** Total number of individual URL occurrences replaced (may exceed chainsFound.length if a chain's URL repeats) */
+  replacementCount: number;
+}
+
+/**
+ * Detection patterns (in chains.json) are deliberately loose for matching
+ * purposes — e.g. "avalanche-mainnet.infura.io/v3/" without a protocol
+ * prefix, since that's all that's needed to confirm a chain is present.
+ * But replacing just that substring would leave a stray "https://" before
+ * the replacement and a stray API key fragment after it.
+ *
+ * This expands a raw match's span to cover the FULL url: backward to the
+ * start of "http://" or "https://" if one immediately precedes the match
+ * (allowing for a quote character in between, e.g. `"https://...`), and
+ * forward through any trailing path/key characters until whitespace or a
+ * closing quote/paren/comma is hit. The expanded span is what actually gets
+ * sliced out and replaced — not the raw pattern match itself.
+ */
+function expandToFullUrl(
+  original: string,
+  matchIndex: number,
+  matchLength: number
+): { start: number; end: number } {
+  let start = matchIndex;
+
+  // Walk backward over the immediately-preceding characters looking for a
+  // protocol prefix. We allow the pattern to already include it (some do),
+  // in which case this is a no-op.
+  const PROTOCOLS = ["https://", "http://"];
+  for (const protocol of PROTOCOLS) {
+    const candidateStart = matchIndex - protocol.length;
+    if (
+      candidateStart >= 0 &&
+      original.slice(candidateStart, matchIndex).toLowerCase() === protocol
+    ) {
+      start = candidateStart;
+      break;
+    }
+  }
+
+  // Walk forward from the end of the raw match through any trailing
+  // URL-safe characters (api keys, path segments) until we hit something
+  // that clearly isn't part of a URL — whitespace, quote, closing paren,
+  // comma, semicolon, or backtick.
+  const STOP_CHARS = new Set([
+    " ",
+    "\t",
+    "\n",
+    "\r",
+    '"',
+    "'",
+    "`",
+    ")",
+    ",",
+    ";",
+    "<",
+    ">",
+  ]);
+  let end = matchIndex + matchLength;
+  while (end < original.length && !STOP_CHARS.has(original[end])) {
+    end++;
+  }
+
+  return { start, end };
+}
+
+/**
+ * Takes a whole file's text content and returns a new version with every
+ * detected Infura/Alchemy/QuickNode URL replaced by its Pocket Network
+ * equivalent — everything else in the file (comments, unrelated code,
+ * formatting) is left completely untouched.
+ *
+ * Implementation note: matching is done against a lowercased copy of the
+ * input (so detection is case-insensitive, matching detectChain's
+ * behaviour), but each raw match's span is first expanded to cover the full
+ * URL (see expandToFullUrl) before slicing from the ORIGINAL string. This
+ * matters because chains.json patterns are intentionally loose for
+ * detection (e.g. missing the "https://" prefix or the trailing API key) —
+ * replacing only the raw pattern would leave protocol/key fragments behind.
+ */
+export function replaceAllOccurrences(input: string): FileConversionResult {
+  if (!input) {
+    return { convertedContent: input, chainsFound: [], replacementCount: 0 };
+  }
+
+  const haystack = input.toLowerCase();
+  const rawMatches = findAllMatches(haystack);
+  if (rawMatches.length === 0) {
+    return { convertedContent: input, chainsFound: [], replacementCount: 0 };
+  }
+
+  const resolved = resolveOverlaps(rawMatches).sort(
+    (a, b) => a.index - b.index
+  );
+
+  // Expand every match to its full URL span before replacing.
+  const expandedMatches = resolved.map((match) => {
+    const { start, end } = expandToFullUrl(
+      input,
+      match.index,
+      match.matchedPattern.length
+    );
+    return { ...match, expandedStart: start, expandedEnd: end };
+  });
+
+  // Build the replaced string by walking matches left to right, copying the
+  // untouched gap before each match, then the replacement, then advancing
+  // past the original (expanded) match. This avoids the classic bug of
+  // replacing in place while indices shift — we build a new string instead
+  // of mutating.
+  let result = "";
+  let cursor = 0;
+  for (const match of expandedMatches) {
+    result += input.slice(cursor, match.expandedStart);
+    result += match.chain.pocketUrl;
+    cursor = match.expandedEnd;
+  }
+  result += input.slice(cursor);
+
+  // Distinct chains found, for the summary UI — same dedupe approach as
+  // detectAllChains, but we still report the true replacementCount
+  // separately so "Ethereum appeared 3 times" isn't lost information.
+  const seenChainIds = new Set<string>();
+  const chainsFound: DetectionResult[] = [];
+  for (const match of resolved) {
+    if (seenChainIds.has(match.chain.id)) continue;
+    seenChainIds.add(match.chain.id);
+    chainsFound.push({
+      chain: match.chain,
+      providerName: match.providerName,
+      providerLabel: match.providerLabel,
+      matchedPattern: match.matchedPattern,
+    });
+  }
+
+  return {
+    convertedContent: result,
+    chainsFound,
+    replacementCount: resolved.length,
+  };
 }
 
 /**

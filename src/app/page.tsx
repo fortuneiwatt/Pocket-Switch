@@ -1,4 +1,4 @@
-import { Converter } from "@/components/converter/Converter";
+import { ConverterModeToggle } from "@/components/converter/ConverterModeToggle";
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
         </p>
       </section>
 
-      <Converter />
+      <ConverterModeToggle />
     </>
   );
 }

@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { detectChain, detectAllChains, ALL_CHAINS, MAINNET_CHAINS } from "../parser";
+import {
+  detectChain,
+  detectAllChains,
+  replaceAllOccurrences,
+  ALL_CHAINS,
+  MAINNET_CHAINS,
+} from "../parser";
 
 describe("detectChain", () => {
   it("detects Ethereum from a raw Infura URL", () => {
@@ -187,6 +193,117 @@ describe("detectAllChains", () => {
     const chainNames = results.map((r) => r.chain.name);
 
     expect(chainNames).toEqual(["Polygon", "Ethereum", "Arbitrum"]);
+  });
+});
+
+describe("replaceAllOccurrences", () => {
+  it("replaces a single URL with its Pocket equivalent and leaves everything else untouched", () => {
+    const input = `const provider = new JsonRpcProvider("https://mainnet.infura.io/v3/abc123")`;
+    const result = replaceAllOccurrences(input);
+
+    expect(result.convertedContent).toBe(
+      `const provider = new JsonRpcProvider("https://eth.api.pocket.network")`
+    );
+    expect(result.replacementCount).toBe(1);
+    expect(result.chainsFound.map((c) => c.chain.name)).toEqual(["Ethereum"]);
+  });
+
+  it("replaces every chain in a realistic multi-chain wagmi config, preserving surrounding code exactly", () => {
+    const input = `export const config = createConfig({
+  chains: [mainnet, polygon, arbitrum],
+  transports: {
+    [mainnet.id]: http("https://mainnet.infura.io/v3/KEY"),
+    [polygon.id]: http("https://polygon-mainnet.g.alchemy.com/v2/KEY"),
+    [arbitrum.id]: http("https://arbitrum-mainnet.infura.io/v3/KEY"),
+  },
+});`;
+    const result = replaceAllOccurrences(input);
+
+    expect(result.convertedContent).toBe(`export const config = createConfig({
+  chains: [mainnet, polygon, arbitrum],
+  transports: {
+    [mainnet.id]: http("https://eth.api.pocket.network"),
+    [polygon.id]: http("https://poly.api.pocket.network"),
+    [arbitrum.id]: http("https://arb-one.api.pocket.network"),
+  },
+});`);
+    expect(result.replacementCount).toBe(3);
+    expect(result.chainsFound.map((c) => c.chain.name).sort()).toEqual([
+      "Arbitrum",
+      "Ethereum",
+      "Polygon",
+    ]);
+  });
+
+  it("replaces every occurrence even when the same chain's URL repeats, and counts them all", () => {
+    const input = `
+PRIMARY_RPC=https://mainnet.infura.io/v3/KEY1
+FALLBACK_RPC=https://mainnet.infura.io/v3/KEY2
+    `;
+    const result = replaceAllOccurrences(input);
+
+    // Both lines should be replaced with the same Pocket URL...
+    const occurrences = result.convertedContent.match(
+      /https:\/\/eth\.api\.pocket\.network/g
+    );
+    expect(occurrences?.length).toBe(2);
+    // ...but chainsFound reports Ethereum once, since it's a summary, not a log.
+    expect(result.chainsFound.map((c) => c.chain.name)).toEqual(["Ethereum"]);
+    // replacementCount, however, reflects the true number of replacements made.
+    expect(result.replacementCount).toBe(2);
+  });
+
+  it("does not let a shorter overlapping pattern corrupt a longer, more specific replacement (regression)", () => {
+    // Same bug class as detectChain's Ethereum/Arbitrum substring issue,
+    // now checked against the actual string-splicing logic: if overlap
+    // resolution were wrong here, the output URL would be mangled, not
+    // just mis-labelled.
+    const input = `https://avalanche-mainnet.infura.io/v3/KEY`;
+    const result = replaceAllOccurrences(input);
+
+    expect(result.convertedContent).toBe(
+      "https://avax.api.pocket.network"
+    );
+    expect(result.chainsFound[0].chain.name).toBe("Avalanche (C-Chain)");
+  });
+
+  it("preserves unrelated surrounding text, comments, and formatting exactly", () => {
+    const input = `# Production config — do not commit\nRPC_URL=https://mainnet.infura.io/v3/KEY # primary endpoint\nDEBUG=false`;
+    const result = replaceAllOccurrences(input);
+
+    expect(result.convertedContent).toBe(
+      `# Production config — do not commit\nRPC_URL=https://eth.api.pocket.network # primary endpoint\nDEBUG=false`
+    );
+  });
+
+  it("returns the original content unchanged when no provider is recognised", () => {
+    const input = "DATABASE_URL=postgres://localhost:5432/mydb";
+    const result = replaceAllOccurrences(input);
+
+    expect(result.convertedContent).toBe(input);
+    expect(result.replacementCount).toBe(0);
+    expect(result.chainsFound).toEqual([]);
+  });
+
+  it("returns an empty result for empty input without throwing", () => {
+    const result = replaceAllOccurrences("");
+    expect(result.convertedContent).toBe("");
+    expect(result.replacementCount).toBe(0);
+  });
+
+  it("correctly separates two different chains' URLs even when they sit on adjacent lines with no gap between the key and the next protocol", () => {
+    // Stress-tests the full-URL expansion logic: if expansion over-reached
+    // forward or backward, this would corrupt one or both replacements by
+    // merging them or truncating one into the other.
+    const input = `https://mainnet.infura.io/v3/KEY1
+https://polygon-mainnet.g.alchemy.com/v2/KEY2`;
+    const result = replaceAllOccurrences(input);
+
+    expect(result.convertedContent).toBe(
+      `https://eth.api.pocket.network
+https://poly.api.pocket.network`
+    );
+    expect(result.replacementCount).toBe(2);
   });
 });
 
