@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { detectChain, ALL_CHAINS, MAINNET_CHAINS } from "../parser";
+import { detectChain, detectAllChains, ALL_CHAINS, MAINNET_CHAINS } from "../parser";
 
 describe("detectChain", () => {
   it("detects Ethereum from a raw Infura URL", () => {
@@ -59,6 +59,41 @@ describe("detectChain", () => {
     }
   });
 
+  // Regression test for a second real collision found while expanding Alchemy
+  // coverage: "bnb-mainnet.g.alchemy.com/v2/" (BSC) was a literal substring of
+  // "opbnb-mainnet.g.alchemy.com/v2/" (opBNB). Longest-match-wins happened to
+  // save us here by luck (opBNB's pattern is longer), but relying on length
+  // alone is fragile — so BSC's pattern was anchored with a protocol prefix
+  // to make the two patterns unambiguous by construction, not by luck.
+  it("does not misdetect opBNB Alchemy URLs as BNB Smart Chain (regression)", () => {
+    const result = detectChain(
+      "https://opbnb-mainnet.g.alchemy.com/v2/KEY"
+    );
+    expect(result?.chain.name).toBe("opBNB");
+    expect(result?.chain.name).not.toBe("BNB Smart Chain");
+  });
+
+  it("detects newly added Alchemy chains correctly (Metis, Boba, Sonic, Ink, Hyperliquid, Tron, Gnosis, Moonbeam, Celo)", () => {
+    const newAlchemyChains: [string, string][] = [
+      ["https://metis-mainnet.g.alchemy.com/v2/KEY", "Metis"],
+      ["https://boba-mainnet.g.alchemy.com/v2/KEY", "Boba Network"],
+      ["https://sonic-mainnet.g.alchemy.com/v2/KEY", "Sonic"],
+      ["https://ink-mainnet.g.alchemy.com/v2/KEY", "Ink"],
+      ["https://hyperliquid-mainnet.g.alchemy.com/v2/KEY", "Hyperliquid"],
+      ["https://tron-mainnet.g.alchemy.com/v2/KEY", "Tron"],
+      ["https://gnosis-mainnet.g.alchemy.com/v2/KEY", "Gnosis"],
+      ["https://moonbeam-mainnet.g.alchemy.com/v2/KEY", "Moonbeam"],
+      ["https://celo-mainnet.g.alchemy.com/v2/KEY", "Celo"],
+    ];
+
+    for (const [url, expectedChain] of newAlchemyChains) {
+      const result = detectChain(url);
+      expect(result?.chain.name, `Failed for URL: ${url}`).toBe(
+        expectedChain
+      );
+    }
+  });
+
   it("returns null for input with no recognisable provider", () => {
     const result = detectChain("totally unrelated text with no rpc url");
     expect(result).toBeNull();
@@ -74,6 +109,84 @@ describe("detectChain", () => {
     const result = detectChain("https://made-up-chain.infura.io/v3/KEY");
     expect(result?.providerName).toBe("infura");
     expect(result?.chain.name).toBe("Ethereum"); // documented fallback behaviour
+  });
+});
+
+describe("detectAllChains", () => {
+  it("detects multiple distinct chains from a realistic multi-chain wagmi config", () => {
+    const snippet = `
+      export const config = createConfig({
+        chains: [mainnet, polygon, arbitrum],
+        transports: {
+          [mainnet.id]: http("https://mainnet.infura.io/v3/KEY"),
+          [polygon.id]: http("https://polygon-mainnet.g.alchemy.com/v2/KEY"),
+          [arbitrum.id]: http("https://arbitrum-mainnet.infura.io/v3/KEY"),
+        },
+      });
+    `;
+    const results = detectAllChains(snippet);
+    const chainNames = results.map((r) => r.chain.name).sort();
+
+    expect(chainNames).toEqual(["Arbitrum", "Ethereum", "Polygon"]);
+  });
+
+  it("does not let a shorter overlapping pattern shadow a longer, more specific one (regression)", () => {
+    // Same underlying bug class as the Ethereum/Arbitrum substring issue in
+    // detectChain, but now checked in the multi-match context: every chain
+    // in this batch should resolve correctly, not collapse into Ethereum.
+    const snippet = `
+      https://mainnet.infura.io/v3/KEY
+      https://avalanche-mainnet.infura.io/v3/KEY
+      https://base-mainnet.infura.io/v3/KEY
+    `;
+    const results = detectAllChains(snippet);
+    const chainNames = results.map((r) => r.chain.name).sort();
+
+    expect(chainNames).toEqual([
+      "Avalanche (C-Chain)",
+      "Base",
+      "Ethereum",
+    ]);
+  });
+
+  it("deduplicates the same chain appearing twice in the input", () => {
+    const snippet = `
+      const httpUrl = "https://mainnet.infura.io/v3/KEY";
+      const wsUrl = "wss://mainnet.infura.io/ws/v3/KEY";
+    `;
+    const results = detectAllChains(snippet);
+
+    expect(results).toHaveLength(1);
+    expect(results[0].chain.name).toBe("Ethereum");
+  });
+
+  it("returns a single-item array when only one chain is present", () => {
+    const results = detectAllChains(
+      "https://polygon-mainnet.g.alchemy.com/v2/KEY"
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0].chain.name).toBe("Polygon");
+  });
+
+  it("returns an empty array for input with no recognisable provider", () => {
+    expect(detectAllChains("totally unrelated text")).toEqual([]);
+  });
+
+  it("returns an empty array for empty input", () => {
+    expect(detectAllChains("")).toEqual([]);
+    expect(detectAllChains("   ")).toEqual([]);
+  });
+
+  it("preserves left-to-right order of first appearance in the input", () => {
+    const snippet = `
+      https://polygon-mainnet.g.alchemy.com/v2/KEY
+      https://mainnet.infura.io/v3/KEY
+      https://arbitrum-mainnet.infura.io/v3/KEY
+    `;
+    const results = detectAllChains(snippet);
+    const chainNames = results.map((r) => r.chain.name);
+
+    expect(chainNames).toEqual(["Polygon", "Ethereum", "Arbitrum"]);
   });
 });
 

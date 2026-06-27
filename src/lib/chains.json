@@ -221,7 +221,8 @@
         },
         "alchemy": {
           "patterns": [
-            "bnb-mainnet.g.alchemy.com/v2/"
+            "https://bnb-mainnet.g.alchemy.com/v2/",
+            "wss://bnb-mainnet.g.alchemy.com/v2/"
           ],
           "label": "Alchemy — BNB Smart Chain"
         },
@@ -400,6 +401,12 @@
             ".xdai.quiknode.pro"
           ],
           "label": "QuickNode — Gnosis Chain"
+        },
+        "alchemy": {
+          "patterns": [
+            "gnosis-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Gnosis Mainnet"
         }
       },
       "wagmiChain": "gnosis",
@@ -419,6 +426,12 @@
             "celo-mainnet.infura.io/v3/"
           ],
           "label": "Infura — Celo Mainnet"
+        },
+        "alchemy": {
+          "patterns": [
+            "celo-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Celo Mainnet"
         }
       },
       "wagmiChain": "celo",
@@ -463,6 +476,12 @@
             "moonbeam-mainnet.infura.io/v3/"
           ],
           "label": "Infura — Moonbeam"
+        },
+        "alchemy": {
+          "patterns": [
+            "moonbeam-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Moonbeam Mainnet"
         }
       },
       "wagmiChain": "moonbeam",
@@ -498,7 +517,14 @@
       "chainId": 1088,
       "nativeCurrency": "METIS",
       "explorer": "https://andromeda-explorer.metis.io",
-      "providers": {}
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "metis-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Metis Mainnet"
+        }
+      }
     },
     {
       "id": "boba",
@@ -508,7 +534,14 @@
       "chainId": 288,
       "nativeCurrency": "ETH",
       "explorer": "https://bobascan.com",
-      "providers": {}
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "boba-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Boba Network Mainnet"
+        }
+      }
     },
     {
       "id": "kava",
@@ -621,7 +654,14 @@
       "chainId": 146,
       "nativeCurrency": "S",
       "explorer": "https://sonicscan.org",
-      "providers": {}
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "sonic-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Sonic Mainnet"
+        }
+      }
     },
     {
       "id": "fraxtal",
@@ -641,7 +681,14 @@
       "chainId": 57073,
       "nativeCurrency": "ETH",
       "explorer": "https://explorer.inkonchain.com",
-      "providers": {}
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "ink-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Ink Mainnet"
+        }
+      }
     },
     {
       "id": "kaia",
@@ -661,7 +708,14 @@
       "chainId": 998,
       "nativeCurrency": "HYPE",
       "explorer": "https://hyperliquid.xyz",
-      "providers": {}
+      "providers": {
+        "alchemy": {
+          "patterns": [
+            "hyperliquid-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — HyperEVM (Hyperliquid) Mainnet"
+        }
+      }
     },
     {
       "id": "opbnb",
@@ -677,6 +731,12 @@
             "opbnb-mainnet.infura.io/v3/"
           ],
           "label": "Infura — opBNB Mainnet"
+        },
+        "alchemy": {
+          "patterns": [
+            "opbnb-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — opBNB Mainnet"
         }
       }
     },
@@ -917,6 +977,12 @@
             ".tron.quiknode.pro"
           ],
           "label": "QuickNode — Tron Mainnet"
+        },
+        "alchemy": {
+          "patterns": [
+            "tron-mainnet.g.alchemy.com/v2/"
+          ],
+          "label": "Alchemy — Tron Mainnet"
         }
       }
     },

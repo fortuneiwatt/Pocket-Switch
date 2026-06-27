@@ -12,6 +12,13 @@
 
 **Team Argentina**
 
+| Name | Role | Discord |
+|---|---|---|
+| Fortune (DEVFORTUNE) | Full-stack developer | *(your Discord username)* |
+
+*Solo developer — registered as open to teammates, none confirmed at time of writing.*
+
+---
 
 ## Problem Statement
 
@@ -157,8 +164,9 @@ see `COVERAGE.md` for the verification methodology.
 
 ## Repository & Demo Links
 
-- **GitHub:** `https://github.com/fortuneiwatt/pocket-switch` *(public)*
+- **GitHub:** `https://github.com/YOUR_USERNAME/pocket-switch` *(public)*
 - **Live demo:** [pocket-switch.onrender.com](https://pocket-switch.onrender.com/)
+- **Demo video (Week 2):** *(update with submission link)*
 
 ---
 
@@ -188,14 +196,19 @@ code was written before Week 1.
   for 5 frameworks (ethers.js, viem, wagmi, web3.py, curl)
 - Built the Converter UI, Chain Explorer page, and Why Switch comparison
   page
-- **Expanded and verified provider detection coverage** from ~10 to 25 of
-  55 mainnet chains, sourcing every pattern directly from official
-  Infura/MetaMask documentation rather than guessing
+- **Expanded and verified provider detection coverage** from ~10 to 30 of
+  55 mainnet chains across two verification passes, sourcing every pattern
+  directly from official Infura (MetaMask docs) and Alchemy documentation
+  rather than guessing
 - **Found and fixed a real detection bug**: an overly broad Ethereum
   pattern was silently misdetecting other Infura chains (Arbitrum,
   Base, Avalanche, etc.) as Ethereum. Fixed via pattern correction and a
   longest-match-wins algorithm change in the parser
-- Added an automated test suite (Vitest, 11 passing tests) including a
+- **The same automated test caught a second bug** on the very next data
+  expansion: BNB Smart Chain's Alchemy pattern was a substring of opBNB's
+  pattern. Fixed by anchoring the pattern, confirming the regression-test
+  strategy works in practice, not just in theory
+- Added an automated test suite (Vitest, 13 passing tests) including a
   general collision-detection test across all chain data to prevent this
   bug class from recurring
 - Documented detection coverage honestly in `COVERAGE.md`, distinguishing
@@ -220,7 +233,7 @@ code was written before Week 1.
 In the interest of the transparency this update requests, here is what is
 **not** yet true about this project:
 
-- Detection coverage is 25 of 55 mainnet chains (45%), not all 60+ — see
+- Detection coverage is 30 of 55 mainnet chains (55%), not all 60+ — see
   `COVERAGE.md` for the exact breakdown and reasoning
 - No real external user testing has been conducted yet beyond the
   developer's own testing

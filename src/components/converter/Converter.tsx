@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { detectChain } from "@/lib/parser";
+import { detectAllChains } from "@/lib/parser";
 import {
   generateAllSnippets,
   ALL_FRAMEWORKS,
   type GeneratedSnippet,
 } from "@/lib/generator";
 import { highlightCode } from "@/lib/highlight";
+import { testPocketEndpoint, type EndpointTestResult } from "@/lib/testEndpoint";
 import type { DetectionResult, FrameworkId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +22,8 @@ const FRAMEWORK_TAB_LABELS: Record<FrameworkId, string> = {
 
 export function Converter() {
   const [input, setInput] = useState("");
-  const [detection, setDetection] = useState<DetectionResult | null>(null);
+  const [allDetections, setAllDetections] = useState<DetectionResult[]>([]);
+  const [activeChainId, setActiveChainId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<FrameworkId>("ethers");
   const [snippets, setSnippets] = useState<Record<
     FrameworkId,
@@ -30,19 +32,42 @@ export function Converter() {
   const [highlighted, setHighlighted] = useState<Record<string, string>>({});
   const [copiedTab, setCopiedTab] = useState<FrameworkId | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [testResult, setTestResult] = useState<EndpointTestResult>({
+    status: "idle",
+  });
+
+  // The currently selected detection result — defaults to the first chain
+  // found, and switches when the person clicks a different chip in a
+  // multi-chain result.
+  const detection =
+    allDetections.find((d) => d.chain.id === activeChainId) ??
+    allDetections[0] ??
+    null;
 
   const runConversion = useCallback(() => {
-    const result = detectChain(input);
-    if (!result) {
-      setDetection(null);
+    const results = detectAllChains(input);
+    if (results.length === 0) {
+      setAllDetections([]);
+      setActiveChainId(null);
       setSnippets(null);
       setNotFound(input.trim().length > 0);
+      setTestResult({ status: "idle" });
       return;
     }
     setNotFound(false);
-    setDetection(result);
-    setSnippets(generateAllSnippets(result.chain));
+    setAllDetections(results);
+    setActiveChainId(results[0].chain.id);
+    setSnippets(generateAllSnippets(results[0].chain));
+    setTestResult({ status: "idle" }); // reset any previous test when a new chain is detected
   }, [input]);
+
+  function selectChain(chainId: string) {
+    const found = allDetections.find((d) => d.chain.id === chainId);
+    if (!found) return;
+    setActiveChainId(chainId);
+    setSnippets(generateAllSnippets(found.chain));
+    setTestResult({ status: "idle" }); // reset test result when switching chains
+  }
 
   // Re-highlight whenever the active tab's snippet changes
   useEffect(() => {
@@ -67,6 +92,13 @@ export function Converter() {
     });
   }
 
+  async function handleTestEndpoint() {
+    if (!detection) return;
+    setTestResult({ status: "loading" });
+    const result = await testPocketEndpoint(detection.chain);
+    setTestResult(result);
+  }
+
   return (
     <div className="max-w-3xl mx-auto px-6 pb-16">
       {/* Input card */}
@@ -86,14 +118,14 @@ export function Converter() {
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={`https://mainnet.infura.io/v3/YOUR_KEY\n// or paste a full code snippet\nconst provider = new JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/KEY")`}
+          placeholder={`https://mainnet.infura.io/v3/YOUR_KEY\n// or paste a full multi-chain config — every chain found gets converted\nconst provider = new JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/KEY")`}
           className="w-full min-h-[140px] bg-transparent border-none outline-none p-5 font-mono-code text-[13px] text-foreground/90 resize-none leading-relaxed placeholder:text-border-hover"
           spellCheck={false}
         />
 
         <div className="flex items-center justify-between px-5 py-3 border-t border-border bg-surface-raised">
           <span className="text-xs text-muted font-mono-code">
-            Supports: Infura · Alchemy · QuickNode
+            Supports: Infura · Alchemy · QuickNode · multi-chain paste
           </span>
           <button
             onClick={runConversion}
@@ -126,7 +158,9 @@ export function Converter() {
           </div>
           <div className="flex-1">
             <div className="text-[11px] text-muted uppercase tracking-wide font-display mb-0.5">
-              Detected
+              {allDetections.length > 1
+                ? `Detected ${allDetections.length} chains`
+                : "Detected"}
             </div>
             <div className="font-display text-sm font-semibold text-accent-text">
               {detection.providerLabel}
@@ -138,23 +172,95 @@ export function Converter() {
         </div>
       )}
 
+      {/* Multi-chain selector — only appears when the paste contained more
+          than one distinct chain (e.g. a multi-chain wagmi config or a
+          .env file listing several networks). Clicking a chip swaps which
+          chain's detail view (endpoint, code, test button) is shown below,
+          reusing all of the same UI as the single-chain case. */}
+      {allDetections.length > 1 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {allDetections.map((d) => (
+            <button
+              key={d.chain.id}
+              onClick={() => selectChain(d.chain.id)}
+              className={cn(
+                "px-3 py-1.5 rounded-full text-xs font-display font-medium border transition-colors",
+                d.chain.id === detection.chain.id
+                  ? "bg-accent text-white border-accent"
+                  : "bg-surface border-border text-muted-lighter hover:border-border-hover hover:text-foreground"
+              )}
+            >
+              {d.chain.name}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Output */}
       {snippets && detection && (
         <div className="mt-4 bg-surface border border-border rounded-2xl overflow-hidden">
           {/* Prominent Pocket endpoint callout — makes the actual Pocket Network
-              usage impossible to miss, independent of syntax highlighting */}
-          <div className="flex items-center gap-3 px-5 py-3.5 border-b border-success-border bg-success-bg">
-            <div className="w-7 h-7 rounded-md bg-success/15 flex items-center justify-center text-sm flex-shrink-0">
-              ⬡
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-[10px] text-success-text/70 uppercase tracking-wide font-display mb-0.5">
-                Pocket Network Endpoint
+              usage impossible to miss, independent of syntax highlighting.
+              Includes a live "Test Endpoint" button that fires a real
+              JSON-RPC request at the actual Pocket URL, proving it's not
+              just text on screen. */}
+          <div className="border-b border-success-border bg-success-bg">
+            <div className="flex flex-wrap items-center gap-3 px-5 py-3.5">
+              <div className="w-7 h-7 rounded-md bg-success/15 flex items-center justify-center text-sm flex-shrink-0">
+                ⬡
               </div>
-              <div className="font-mono-code text-[13px] text-success-text font-medium truncate">
-                {detection.chain.pocketUrl}
+              <div className="flex-1 min-w-0 basis-full sm:basis-0">
+                <div className="text-[10px] text-success-text/70 uppercase tracking-wide font-display mb-0.5">
+                  Pocket Network Endpoint
+                </div>
+                <div className="font-mono-code text-[13px] text-success-text font-medium break-all sm:truncate">
+                  {detection.chain.pocketUrl}
+                </div>
               </div>
+              <button
+                onClick={handleTestEndpoint}
+                disabled={testResult.status === "loading"}
+                className={cn(
+                  "flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-display font-medium border transition-colors flex items-center gap-1.5",
+                  testResult.status === "loading"
+                    ? "border-success-border text-success-text/60 cursor-wait"
+                    : "border-success-border text-success-text hover:bg-success/10"
+                )}
+              >
+                {testResult.status === "loading" ? (
+                  <>
+                    <span className="w-2.5 h-2.5 rounded-full border-2 border-success-text/40 border-t-success-text animate-spin" />
+                    Testing...
+                  </>
+                ) : (
+                  <>▶ Test Endpoint</>
+                )}
+              </button>
             </div>
+
+            {/* Live result — only shown after a test has been run */}
+            {testResult.status === "success" && (
+              <div className="px-5 pb-3.5 -mt-1 flex items-center gap-2 text-[12px] font-mono-code">
+                <span className="text-success-text font-semibold">
+                  ✓ Live: {testResult.message}
+                </span>
+                <span className="text-success-text/60">
+                  · {testResult.latencyMs}ms
+                </span>
+              </div>
+            )}
+            {testResult.status === "error" && (
+              <div className="px-5 pb-3.5 -mt-1 flex items-center gap-2 text-[12px] font-mono-code">
+                <span className="text-danger font-semibold">
+                  ✕ {testResult.message}
+                </span>
+                {testResult.latencyMs !== undefined && (
+                  <span className="text-success-text/40">
+                    · {testResult.latencyMs}ms
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex border-b border-border bg-surface-raised overflow-x-auto">
